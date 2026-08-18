@@ -33,7 +33,7 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
-  const [activeCategory, setActiveCategory] = useState<Category>("sanduiches");
+  const [activeCategory, setActiveCategory] = useState<Category>("hamburguer");
   const {
     items,
     addItem,
