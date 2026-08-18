@@ -26,7 +26,12 @@ export function MenuItemCard({ item, onAdd }: MenuItemCardProps) {
           <div className="flex-1">
             <div className="flex items-center gap-2">
               <h3 className="font-semibold text-card-foreground">{item.name}</h3>
-              {item.popular && (
+              {item.badge && (
+                <Badge className="bg-primary text-primary-foreground hover:bg-primary">
+                  {item.badge}
+                </Badge>
+              )}
+              {item.popular && !item.badge && (
                 <Badge
                   variant="secondary"
                   className="bg-brand-subtle text-brand hover:bg-brand-subtle"

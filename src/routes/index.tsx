@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState, useMemo } from "react";
 import { Phone, Clock, MapPin, ChevronDown, Utensils } from "lucide-react";
 
-import { menuItems, gratis, type Category } from "@/data/menu";
+import { menuItems, gratis, acaiAdicionais, sabores, type Category } from "@/data/menu";
 import { useCart } from "@/hooks/use-cart";
 import { CategoryTabs } from "@/components/CategoryTabs";
 import { MenuItemCard } from "@/components/MenuItemCard";
@@ -33,7 +33,7 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
-  const [activeCategory, setActiveCategory] = useState<Category>("hamburguer");
+  const [activeCategory, setActiveCategory] = useState<Category>("promocoes");
   const {
     items,
     addItem,
@@ -153,6 +153,23 @@ function Index() {
         <div className="sticky top-[73px] z-30 -mx-4 bg-background/95 px-4 py-3 backdrop-blur-md">
           <CategoryTabs active={activeCategory} onChange={setActiveCategory} />
         </div>
+
+        {activeCategory === "acai" && (
+          <div className="mt-8 grid gap-4 sm:grid-cols-2">
+            <div className="rounded-2xl border border-border bg-card p-5">
+              <h3 className="font-semibold text-card-foreground">Adicionais do açaí</h3>
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                {acaiAdicionais.join(" • ")}
+              </p>
+            </div>
+            <div className="rounded-2xl border border-border bg-card p-5">
+              <h3 className="font-semibold text-card-foreground">Sabores de cremes e sucos</h3>
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                {sabores.join(" • ")}
+              </p>
+            </div>
+          </div>
+        )}
 
         <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {filteredItems.map((item) => (
