@@ -18,7 +18,11 @@ export function MenuItemCard({ item, onAdd }: MenuItemCardProps) {
           src={item.image}
           alt={item.name}
           loading="lazy"
-          className="h-44 w-full object-cover transition-transform duration-300 group-hover:scale-105"
+          className={
+            item.category === "promocoes"
+              ? "w-full bg-secondary object-contain"
+              : "h-44 w-full object-cover transition-transform duration-300 group-hover:scale-105"
+          }
         />
       )}
       <CardContent className="flex flex-1 flex-col gap-3 p-4">
