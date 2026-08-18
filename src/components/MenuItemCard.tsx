@@ -12,8 +12,16 @@ interface MenuItemCardProps {
 
 export function MenuItemCard({ item, onAdd }: MenuItemCardProps) {
   return (
-    <Card className="group overflow-hidden border border-border bg-card transition-shadow hover:shadow-md">
-      <CardContent className="flex flex-col gap-3 p-4">
+    <Card className="group flex flex-col overflow-hidden border border-border bg-card transition-shadow hover:shadow-md">
+      {item.image && (
+        <img
+          src={item.image}
+          alt={item.name}
+          loading="lazy"
+          className="h-44 w-full object-cover transition-transform duration-300 group-hover:scale-105"
+        />
+      )}
+      <CardContent className="flex flex-1 flex-col gap-3 p-4">
         <div className="flex items-start justify-between gap-3">
           <div className="flex-1">
             <div className="flex items-center gap-2">
