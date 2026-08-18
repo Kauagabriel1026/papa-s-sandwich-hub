@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useMemo } from "react";
-import { Phone, Clock, MapPin, ChevronDown, Utensils } from "lucide-react";
+import { Phone, Clock, MapPin, ChevronDown } from "lucide-react";
 
 import { menuItems, gratis, acaiAdicionais, sabores, type Category } from "@/data/menu";
 import { useCart } from "@/hooks/use-cart";
@@ -9,6 +9,7 @@ import { MenuItemCard } from "@/components/MenuItemCard";
 import { CartSheet } from "@/components/CartSheet";
 import { Button } from "@/components/ui/button";
 import heroBurger from "@/assets/image-7.png.asset.json";
+import mascote from "@/assets/image-17.png.asset.json";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -60,9 +61,11 @@ function Index() {
       <header className="sticky top-0 z-40 border-b border-border bg-background/80 backdrop-blur-md">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
           <div className="flex items-center gap-2">
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-primary-foreground">
-              <Utensils className="h-4 w-4" />
-            </div>
+            <img
+              src={mascote.url}
+              alt="Mascote PapaLéguas Burguer"
+              className="h-10 w-10 rounded-full object-cover ring-2 ring-primary"
+            />
             <span className="text-lg font-bold tracking-tight text-foreground">
               PapaLéguas <span className="text-primary">Burguer</span>
             </span>
@@ -129,6 +132,11 @@ function Index() {
             <div className="relative">
               <div className="absolute -inset-4 rounded-full bg-brand/10 blur-3xl" />
               <img
+                src={mascote.url}
+                alt="Mascote PapaLéguas Burguer"
+                className="absolute -left-6 -top-8 z-20 hidden h-28 w-28 rounded-full border-4 border-background object-cover shadow-xl sm:block"
+              />
+              <img
                 src={heroBurger.url}
                 alt="Hambúrguer artesanal da PapaLéguas Burguer"
                 className="relative z-10 w-full max-w-md rounded-3xl object-cover shadow-2xl"
@@ -188,9 +196,11 @@ function Index() {
       <footer className="border-t border-border bg-secondary/30 px-4 py-10">
         <div className="mx-auto max-w-6xl text-center">
           <div className="flex items-center justify-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground">
-              <Utensils className="h-3.5 w-3.5" />
-            </div>
+            <img
+              src={mascote.url}
+              alt="Mascote PapaLéguas Burguer"
+              className="h-9 w-9 rounded-full object-cover ring-2 ring-primary"
+            />
             <span className="text-lg font-bold text-foreground">
               PapaLéguas <span className="text-primary">Burguer</span>
             </span>

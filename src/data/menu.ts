@@ -4,6 +4,12 @@ import imgCombo from "@/assets/image-5.png.asset.json";
 import imgFrango from "@/assets/image-3.png.asset.json";
 import imgAnel from "@/assets/image-2.png.asset.json";
 import imgBatata from "@/assets/image-6.png.asset.json";
+import imgAcai1 from "@/assets/image-18.png.asset.json";
+import imgAcai2 from "@/assets/image-19.png.asset.json";
+import promoSegunda from "@/assets/image-13.png.asset.json";
+import promoXtudoLata from "@/assets/image-14.png.asset.json";
+import promoXbacon from "@/assets/image-15.png.asset.json";
+import promoBatata from "@/assets/image-16.png.asset.json";
 
 export type Category =
   | "promocoes"
@@ -86,24 +92,42 @@ const rangoOvo = (b: string) => b.replace("salsicha,", "salsicha, frango, ovo,")
 export const menuItems: MenuItem[] = [
   // ── Promoções ─────────────────────────────
   {
-    id: "promo-xtudo-combo",
-    name: "X-Tudo + Coca Lata + Batata P",
-    description: "A combinação que todo mundo ama: X-Tudo, Coca-Cola lata 350ml e batata pequena.",
-    price: 40.0,
+    id: "promo-segunda-xtudo",
+    name: "Segunda-Feira: X-Tudo + Batata Recheada (P) + Guaraná 1,5L",
+    description: "Promoção exclusiva de segunda-feira. Comece a semana do jeito certo!",
+    price: 50.0,
     category: "promocoes",
-    image: imgCombo.url,
+    image: promoSegunda.url,
+    badge: "Só na segunda",
     popular: true,
-    badge: "Preço especial",
   },
   {
-    id: "promo-xtudo-refri",
-    name: "X-Tudo + Refrigerante Lata",
-    description: "X-Tudo completo com refrigerante lata 350ml.",
+    id: "promo-xtudo-lata",
+    name: "X-Tudo + Refrigerante Lata 350ml",
+    description: "O mais pedido da casa com refrigerante lata gelado.",
     price: 28.0,
     category: "promocoes",
-    image: imgHamburguer.url,
+    image: promoXtudoLata.url,
+    badge: "Imperdível",
     popular: true,
-    badge: "Promoção",
+  },
+  {
+    id: "promo-segunda-xbacon",
+    name: "Segunda-Feira: X-Bacon Simples + Refrigerante Lata",
+    description: "Promoção exclusiva de segunda-feira. Simplesmente irresistível!",
+    price: 25.0,
+    category: "promocoes",
+    image: promoXbacon.url,
+    badge: "Só na segunda",
+  },
+  {
+    id: "promo-segunda-batata",
+    name: "Segunda-Feira: Batata Recheada (G) + Guaraná 1,5L",
+    description: "A mais completa e saborosa da região, promoção de segunda-feira.",
+    price: 34.0,
+    category: "promocoes",
+    image: promoBatata.url,
+    badge: "Só na segunda",
   },
 
   // ── Hambúrguer ─────────────────────────────
@@ -145,8 +169,8 @@ export const menuItems: MenuItem[] = [
   { id: "nuggets-p", name: "Nuggets (P)", description: "Porção pequena de nuggets de frango.", price: 12.0, category: "porcoes" },
 
   // ── Açaí, cremes e sucos ─────────────────────────────
-  { id: "acai-350", name: "Açaí 350ml", description: "Monte com os adicionais da casa.", price: 20.0, category: "acai" },
-  { id: "acai-500", name: "Açaí 500ml", description: "Monte com os adicionais da casa.", price: 25.0, category: "acai", popular: true },
+  { id: "acai-350", name: "Açaí 350ml", description: "Monte com os adicionais da casa.", price: 20.0, category: "acai", image: imgAcai2.url },
+  { id: "acai-500", name: "Açaí 500ml", description: "Monte com os adicionais da casa.", price: 25.0, category: "acai", popular: true, image: imgAcai1.url },
   { id: "creme-500", name: "Creme 500ml", description: "Escolha o sabor na observação do pedido.", price: 13.0, category: "acai" },
   { id: "suco-polpa-500", name: "Suco de Polpa 500ml", description: "Escolha o sabor na observação do pedido.", price: 10.5, category: "acai" },
 
