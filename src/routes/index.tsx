@@ -2,13 +2,13 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState, useMemo } from "react";
 import { Phone, Clock, MapPin, ChevronDown, Utensils } from "lucide-react";
 
-import { menuItems, categories, type Category } from "@/data/menu";
+import { menuItems, gratis, type Category } from "@/data/menu";
 import { useCart } from "@/hooks/use-cart";
 import { CategoryTabs } from "@/components/CategoryTabs";
 import { MenuItemCard } from "@/components/MenuItemCard";
 import { CartSheet } from "@/components/CartSheet";
 import { Button } from "@/components/ui/button";
-import heroBurger from "@/assets/hero-burger.jpg";
+import heroBurger from "@/assets/image-7.png.asset.json";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -33,7 +33,7 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
-  const [activeCategory, setActiveCategory] = useState<Category>("sanduiches");
+  const [activeCategory, setActiveCategory] = useState<Category>("hamburguer");
   const {
     items,
     addItem,
@@ -129,7 +129,7 @@ function Index() {
             <div className="relative">
               <div className="absolute -inset-4 rounded-full bg-brand/10 blur-3xl" />
               <img
-                src={heroBurger}
+                src={heroBurger.url}
                 alt="Hambúrguer artesanal da PapaLéguas Burguer"
                 className="relative z-10 w-full max-w-md rounded-3xl object-cover shadow-2xl"
               />
@@ -144,6 +144,9 @@ function Index() {
           <h2 className="text-3xl font-bold tracking-tight text-foreground">Nosso cardápio</h2>
           <p className="mt-2 text-muted-foreground">
             Escolha seus favoritos e monte seu pedido.
+          </p>
+          <p className="mx-auto mt-3 max-w-md rounded-full bg-brand-subtle px-4 py-2 text-sm font-medium text-brand">
+            Grátis em todos os sanduíches: {gratis.join(", ")}
           </p>
         </div>
 
