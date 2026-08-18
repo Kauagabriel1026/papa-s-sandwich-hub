@@ -1,11 +1,18 @@
+import imgLombo from "@/assets/image.png.asset.json";
+import imgHamburguer from "@/assets/image-7.png.asset.json";
+import imgCombo from "@/assets/image-5.png.asset.json";
+import imgFrango from "@/assets/image-3.png.asset.json";
+import imgAnel from "@/assets/image-2.png.asset.json";
+import imgBatata from "@/assets/image-6.png.asset.json";
+
 export type Category =
-  | "sanduiches"
+  | "hamburguer"
+  | "lombo"
+  | "frango"
   | "combos"
-  | "batatas"
-  | "acompanhamentos"
-  | "bebidas"
-  | "sucos"
-  | "acai-cremes";
+  | "porcoes"
+  | "adicionais"
+  | "bebidas";
 
 export interface MenuItem {
   id: string;
@@ -18,187 +25,245 @@ export interface MenuItem {
 }
 
 export const categories: { id: Category; label: string }[] = [
-  { id: "sanduiches", label: "Sanduíches" },
+  { id: "hamburguer", label: "Hambúrguer" },
+  { id: "lombo", label: "Lombo" },
+  { id: "frango", label: "Filé de Frango" },
   { id: "combos", label: "Combos" },
-  { id: "batatas", label: "Batatas" },
-  { id: "acompanhamentos", label: "Acompanhamentos" },
+  { id: "porcoes", label: "Porções" },
+  { id: "adicionais", label: "Adicionais" },
   { id: "bebidas", label: "Bebidas" },
-  { id: "sucos", label: "Sucos" },
-  { id: "acai-cremes", label: "Açaí e Cremes" },
 ];
 
+/** Itens grátis oferecidos em qualquer sanduíche */
+export const gratis = ["Cheddar", "Cebola", "Abacaxi", "Catupiry"];
+
+const baseHamburguer = "Pão, salsicha, mussarela, presunto, milho, salada, batata e hambúrguer.";
+const baseLombo = "Pão, salsicha, mussarela, presunto, milho, salada, batata e lombo.";
+const baseFrango = "Pão, salsicha, mussarela, presunto, milho, salada, batata e filé de frango.";
+
+const withOvo = (base: string) => base.replace("salsicha,", "salsicha, ovo,");
+const withBacon = (base: string) => base.replace("salsicha,", "salsicha, bacon,");
+const withBaconOvo = (base: string) => base.replace("salsicha,", "salsicha, bacon, ovo,");
+const withRango = (base: string) => base.replace("salsicha,", "salsicha, frango,");
+const withRangoOvo = (base: string) => base.replace("salsicha,", "salsicha, frango, ovo,");
+
 export const menuItems: MenuItem[] = [
-  // Sanduíches
+  // ── Hambúrguer ─────────────────────────────
   {
-    id: "xbacon",
-    name: "X-Bacon",
-    description: "Hambúrguer, bacon crocante, queijo, alface, tomate e molho especial.",
-    price: 24.9,
-    category: "sanduiches",
+    id: "hb-simples",
+    name: "X-Simples",
+    description: baseHamburguer,
+    price: 17.5,
+    category: "hamburguer",
+    image: imgHamburguer.url,
+  },
+  {
+    id: "hb-especial",
+    name: "X-Especial",
+    description: withOvo(baseHamburguer),
+    price: 18.5,
+    category: "hamburguer",
+  },
+  {
+    id: "hb-bacon-simples",
+    name: "X-Bacon Simples",
+    description: withBacon(baseHamburguer),
+    price: 19.5,
+    category: "hamburguer",
     popular: true,
   },
   {
-    id: "xsalada",
-    name: "X-Salada",
-    description: "Hambúrguer, queijo, alface, tomate, cebola e maionese caseira.",
-    price: 21.9,
-    category: "sanduiches",
+    id: "hb-bacon-especial",
+    name: "X-Bacon Especial",
+    description: withBaconOvo(baseHamburguer),
+    price: 20.5,
+    category: "hamburguer",
   },
   {
-    id: "xtudo",
+    id: "hb-rango-simples",
+    name: "X-Rango Simples",
+    description: withRango(baseHamburguer),
+    price: 18.5,
+    category: "hamburguer",
+  },
+  {
+    id: "hb-rango-especial",
+    name: "X-Rango Especial",
+    description: withRangoOvo(baseHamburguer),
+    price: 19.5,
+    category: "hamburguer",
+  },
+  {
+    id: "hb-tudo",
     name: "X-Tudo",
-    description: "Hambúrguer, bacon, ovo, presunto, queijo, calabresa, alface e tomate.",
-    price: 29.9,
-    category: "sanduiches",
-    popular: true,
-  },
-  {
-    id: "xfrango",
-    name: "X-Frango",
-    description: "Filé de peito de frango grelhado, queijo, alface, tomate e molho verde.",
-    price: 23.9,
-    category: "sanduiches",
-  },
-  {
-    id: "burguer-duplo",
-    name: "PapaLéguas Duplo",
-    description: "Dois hambúrgueres, duplo queijo, cebola caramelizada e molho barbecue.",
-    price: 32.9,
-    category: "sanduiches",
+    description: withBaconOvo(baseHamburguer),
+    price: 21.0,
+    category: "hamburguer",
     popular: true,
   },
 
-  // Combos
+  // ── Lombo ─────────────────────────────
   {
-    id: "combo-papaleguas",
-    name: "Combo PapaLéguas",
-    description: "X-Bacon + batata frita média + refrigerante 350ml.",
-    price: 38.9,
+    id: "lb-simples",
+    name: "X-Simples",
+    description: baseLombo,
+    price: 19.5,
+    category: "lombo",
+    image: imgLombo.url,
+  },
+  {
+    id: "lb-especial",
+    name: "X-Especial",
+    description: withOvo(baseLombo),
+    price: 20.5,
+    category: "lombo",
+  },
+  {
+    id: "lb-bacon-simples",
+    name: "X-Bacon Simples",
+    description: withBacon(baseLombo),
+    price: 21.5,
+    category: "lombo",
+  },
+  {
+    id: "lb-bacon-especial",
+    name: "X-Bacon Especial",
+    description: withBaconOvo(baseLombo),
+    price: 22.5,
+    category: "lombo",
+  },
+  {
+    id: "lb-rango-simples",
+    name: "X-Rango Simples",
+    description: withRango(baseLombo),
+    price: 20.5,
+    category: "lombo",
+  },
+  {
+    id: "lb-rango-especial",
+    name: "X-Rango Especial",
+    description: withRangoOvo(baseLombo),
+    price: 22.5,
+    category: "lombo",
+  },
+  {
+    id: "lb-tudo",
+    name: "X-Tudo",
+    description: withBaconOvo(baseLombo),
+    price: 23.0,
+    category: "lombo",
+    popular: true,
+  },
+
+  // ── Filé de Frango ─────────────────────────────
+  {
+    id: "fr-simples",
+    name: "X-Simples",
+    description: baseFrango,
+    price: 18.5,
+    category: "frango",
+    image: imgFrango.url,
+  },
+  {
+    id: "fr-especial",
+    name: "X-Especial",
+    description: withOvo(baseFrango),
+    price: 19.5,
+    category: "frango",
+  },
+  {
+    id: "fr-bacon-simples",
+    name: "X-Bacon Simples",
+    description: withBacon(baseFrango),
+    price: 20.5,
+    category: "frango",
+  },
+  {
+    id: "fr-bacon-especial",
+    name: "X-Bacon Especial",
+    description: withBaconOvo(baseFrango),
+    price: 21.5,
+    category: "frango",
+  },
+  {
+    id: "fr-rango-simples",
+    name: "X-Rango Simples",
+    description: withRango(baseFrango),
+    price: 19.5,
+    category: "frango",
+  },
+  {
+    id: "fr-rango-especial",
+    name: "X-Rango Especial",
+    description: withRangoOvo(baseFrango),
+    price: 20.5,
+    category: "frango",
+  },
+  {
+    id: "fr-tudo",
+    name: "X-Tudo",
+    description: withBaconOvo(baseFrango),
+    price: 22.0,
+    category: "frango",
+  },
+
+  // ── Combos (confirmar preços) ─────────────────────────────
+  {
+    id: "combo-bacon",
+    name: "Combo X-Bacon",
+    description: "X-Bacon Simples + porção de batata frita + refrigerante lata 350ml.",
+    price: 32.0,
     category: "combos",
+    image: imgCombo.url,
     popular: true,
   },
   {
-    id: "combo-duplo",
-    name: "Combo Duplo",
-    description: "PapaLéguas Duplo + batata frita grande + 2 refrigerantes.",
-    price: 52.9,
-    category: "combos",
-  },
-  {
-    id: "combo-frango",
-    name: "Combo Frango",
-    description: "X-Frango + batata frita média + suco natural.",
-    price: 35.9,
+    id: "combo-tudo",
+    name: "Combo X-Tudo",
+    description: "X-Tudo + porção de batata frita + refrigerante lata 350ml.",
+    price: 34.0,
     category: "combos",
   },
 
-  // Batatas
+  // ── Porções ─────────────────────────────
   {
-    id: "batata-p",
-    name: "Batata Frita P",
-    description: "Porção individual de batatas fritas crocantes.",
-    price: 12.9,
-    category: "batatas",
-  },
-  {
-    id: "batata-m",
-    name: "Batata Frita M",
-    description: "Porção média, ideal para dividir.",
-    price: 18.9,
-    category: "batatas",
-  },
-  {
-    id: "batata-g",
-    name: "Batata Frita G",
-    description: "Porção grande com cheddar e bacon.",
-    price: 26.9,
-    category: "batatas",
+    id: "batata-cheddar",
+    name: "Batata com Cheddar e Bacon",
+    description: "Batata frita coberta com cheddar cremoso, bacon e maionese.",
+    price: 25.0,
+    category: "porcoes",
+    image: imgBatata.url,
     popular: true,
   },
-
-  // Acompanhamentos
   {
-    id: "nuggets-8",
-    name: "Nuggets (8 unidades)",
-    description: "Nuggets de frango empanados com molho barbecue.",
-    price: 16.9,
-    category: "acompanhamentos",
-  },
-  {
-    id: "onion-rings",
+    id: "anel-cebola",
     name: "Anéis de Cebola",
     description: "Porção de anéis de cebola empanados e crocantes.",
-    price: 17.9,
-    category: "acompanhamentos",
+    price: 20.0,
+    category: "porcoes",
+    image: imgAnel.url,
+  },
+  {
+    id: "batata-simples",
+    name: "Batata Frita",
+    description: "Porção de batata frita crocante.",
+    price: 18.0,
+    category: "porcoes",
   },
 
-  // Bebidas
-  {
-    id: "refri-lata",
-    name: "Refrigerante Lata",
-    description: "Coca-Cola, Guaraná, Fanta ou Sprite 350ml.",
-    price: 6.5,
-    category: "bebidas",
-  },
-  {
-    id: "refri-1l",
-    name: "Refrigerante 1L",
-    description: "Coca-Cola, Guaraná ou Fanta 1 litro.",
-    price: 10.9,
-    category: "bebidas",
-  },
-  {
-    id: "agua",
-    name: "Água Mineral",
-    description: "Água mineral sem ou com gás 500ml.",
-    price: 4.5,
-    category: "bebidas",
-  },
+  // ── Adicionais ─────────────────────────────
+  { id: "ad-hamburguer", name: "Hambúrguer", description: "Adicional.", price: 3.0, category: "adicionais" },
+  { id: "ad-presunto", name: "Presunto", description: "Adicional.", price: 2.0, category: "adicionais" },
+  { id: "ad-calabresa", name: "Calabresa", description: "Adicional.", price: 3.0, category: "adicionais" },
+  { id: "ad-mussarela", name: "Mussarela", description: "Adicional.", price: 2.5, category: "adicionais" },
+  { id: "ad-salsicha", name: "Salsicha", description: "Adicional.", price: 2.0, category: "adicionais" },
+  { id: "ad-frango", name: "Frango", description: "Adicional.", price: 3.0, category: "adicionais" },
+  { id: "ad-lombo", name: "Lombo", description: "Adicional.", price: 4.0, category: "adicionais" },
+  { id: "ad-bacon", name: "Bacon", description: "Adicional.", price: 3.5, category: "adicionais" },
+  { id: "ad-ovo", name: "Ovo", description: "Adicional.", price: 1.0, category: "adicionais" },
 
-  // Sucos
-  {
-    id: "suco-laranja",
-    name: "Suco de Laranja",
-    description: "Suco natural de laranja 400ml.",
-    price: 9.9,
-    category: "sucos",
-  },
-  {
-    id: "suco-acerola",
-    name: "Suco de Acerola",
-    description: "Suco natural de acerola 400ml.",
-    price: 9.9,
-    category: "sucos",
-  },
-  {
-    id: "suco-maracuja",
-    name: "Suco de Maracujá",
-    description: "Suco natural de maracujá 400ml.",
-    price: 9.9,
-    category: "sucos",
-  },
-
-  // Açaí e Cremes
-  {
-    id: "acai-300",
-    name: "Açaí 300ml",
-    description: "Açaí na tigela com granola e banana.",
-    price: 14.9,
-    category: "acai-cremes",
-  },
-  {
-    id: "acai-500",
-    name: "Açaí 500ml",
-    description: "Açaí na tigela com granola, banana, leite em pó e leite condensado.",
-    price: 19.9,
-    category: "acai-cremes",
-    popular: true,
-  },
-  {
-    id: "creme-papaya",
-    name: "Creme de Papaya",
-    description: "Creme de papaya com cassis 400ml.",
-    price: 12.9,
-    category: "acai-cremes",
-  },
+  // ── Bebidas (confirmar preços) ─────────────────────────────
+  { id: "refri-lata", name: "Refrigerante Lata 350ml", description: "Coca-Cola, Guaraná, Fanta.", price: 6.0, category: "bebidas" },
+  { id: "refri-2l", name: "Refrigerante 2L", description: "Coca-Cola, Guaraná, Fanta.", price: 14.0, category: "bebidas" },
+  { id: "agua", name: "Água Mineral 500ml", description: "Com ou sem gás.", price: 4.0, category: "bebidas" },
 ];
