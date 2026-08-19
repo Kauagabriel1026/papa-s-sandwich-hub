@@ -43,9 +43,19 @@ export function CartSheet({
     const orderLines = items
       .map(
         (i) =>
-          `${i.quantity}x ${i.item.name} — ${formatCurrency(i.item.price * i.quantity)}${
-            i.observation ? ` (${i.observation})` : ""
-          }`
+          [
+            `${i.quantity}x ${i.item.name} — ${formatCurrency(i.unitPrice * i.quantity)}`,
+            i.flavor ? `   • Sabor: ${i.flavor}` : "",
+            i.removed.length ? `   • Sem: ${i.removed.join(", ")}` : "",
+            i.added.length
+              ? `   • Adicionais: ${i.added
+                  .map((e) => (e.price > 0 ? `${e.name} (+${formatCurrency(e.price)})` : e.name))
+                  .join(", ")}`
+              : "",
+            i.observation ? `   • Obs.: ${i.observation}` : "",
+          ]
+            .filter(Boolean)
+            .join("\n")
       )
       .join("\n");
 
@@ -99,18 +109,33 @@ export function CartSheet({
             <ScrollArea className="my-4 flex-1 pr-2">
               <div className="space-y-4">
                 {items.map((cartItem) => (
-                  <div key={cartItem.item.id} className="rounded-xl border border-border bg-card p-3">
+                  <div key={cartItem.lineId} className="rounded-xl border border-border bg-card p-3">
                     <div className="flex items-start justify-between gap-3">
                       <div className="flex-1">
                         <h4 className="font-semibold text-card-foreground">
                           {cartItem.item.name}
                         </h4>
                         <p className="text-sm text-muted-foreground">
-                          {formatCurrency(cartItem.item.price)} cada
+                          {formatCurrency(cartItem.unitPrice)} cada
                         </p>
+                        {cartItem.flavor && (
+                          <p className="mt-1 text-xs text-muted-foreground">
+                            Sabor: {cartItem.flavor}
+                          </p>
+                        )}
+                        {cartItem.removed.length > 0 && (
+                          <p className="mt-1 text-xs text-destructive">
+                            Sem: {cartItem.removed.join(", ")}
+                          </p>
+                        )}
+                        {cartItem.added.length > 0 && (
+                          <p className="mt-1 text-xs text-brand">
+                            + {cartItem.added.map((e) => e.name).join(", ")}
+                          </p>
+                        )}
                       </div>
                       <button
-                        onClick={() => onRemove(cartItem.item.id)}
+                        onClick={() => onRemove(cartItem.lineId)}
                         className="rounded-md p-1 text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
                         aria-label="Remover item"
                       >
@@ -120,7 +145,7 @@ export function CartSheet({
 
                     <div className="mt-3 flex items-center gap-2">
                       <button
-                        onClick={() => onUpdateQuantity(cartItem.item.id, cartItem.quantity - 1)}
+                        onClick={() => onUpdateQuantity(cartItem.lineId, cartItem.quantity - 1)}
                         className="rounded-md border border-border p-1.5 text-foreground transition-colors hover:bg-accent"
                         aria-label="Diminuir quantidade"
                       >
@@ -130,20 +155,20 @@ export function CartSheet({
                         {cartItem.quantity}
                       </span>
                       <button
-                        onClick={() => onUpdateQuantity(cartItem.item.id, cartItem.quantity + 1)}
+                        onClick={() => onUpdateQuantity(cartItem.lineId, cartItem.quantity + 1)}
                         className="rounded-md border border-border p-1.5 text-foreground transition-colors hover:bg-accent"
                         aria-label="Aumentar quantidade"
                       >
                         <Plus className="h-4 w-4" />
                       </button>
                       <span className="ml-auto font-semibold text-foreground">
-                        {formatCurrency(cartItem.item.price * cartItem.quantity)}
+                        {formatCurrency(cartItem.unitPrice * cartItem.quantity)}
                       </span>
                     </div>
 
                     <Textarea
                       value={cartItem.observation}
-                      onChange={(e) => onUpdateObservation(cartItem.item.id, e.target.value)}
+                      onChange={(e) => onUpdateObservation(cartItem.lineId, e.target.value)}
                       placeholder="Observação: sem cebola, ponto da carne..."
                       className="mt-3 min-h-[60px] resize-none text-sm"
                     />

@@ -7,6 +7,8 @@ import { useCart } from "@/hooks/use-cart";
 import { CategoryTabs } from "@/components/CategoryTabs";
 import { MenuItemCard } from "@/components/MenuItemCard";
 import { CartSheet } from "@/components/CartSheet";
+import { ItemCustomizer } from "@/components/ItemCustomizer";
+import { type MenuItem } from "@/data/menu";
 import { Button } from "@/components/ui/button";
 import heroBurger from "@/assets/image-7.png.asset.json";
 import mascote from "@/assets/image-17.png.asset.json";
@@ -35,6 +37,13 @@ export const Route = createFileRoute("/")({
 
 function Index() {
   const [activeCategory, setActiveCategory] = useState<Category>("promocoes");
+  const [customizingItem, setCustomizingItem] = useState<MenuItem | null>(null);
+  const [customizerOpen, setCustomizerOpen] = useState(false);
+
+  const openCustomizer = (item: MenuItem) => {
+    setCustomizingItem(item);
+    setCustomizerOpen(true);
+  };
   const {
     items,
     addItem,
@@ -181,7 +190,7 @@ function Index() {
 
         <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {filteredItems.map((item) => (
-            <MenuItemCard key={item.id} item={item} onAdd={addItem} />
+            <MenuItemCard key={item.id} item={item} onAdd={addItem} onCustomize={openCustomizer} />
           ))}
         </div>
 
@@ -222,6 +231,13 @@ function Index() {
           </p>
         </div>
       </footer>
+
+      <ItemCustomizer
+        item={customizingItem}
+        open={customizerOpen}
+        onOpenChange={setCustomizerOpen}
+        onConfirm={(item, custom) => addItem(item, custom)}
+      />
 
       {/* Floating cart */}
       <CartSheet
