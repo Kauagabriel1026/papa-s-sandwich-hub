@@ -11,8 +11,8 @@ export interface CartItem {
   removed: string[];
   /** Adicionais escolhidos (grátis ou pagos) */
   added: ExtraOption[];
-  /** Sabor escolhido (cremes/sucos) */
-  flavor?: string;
+  /** Sabor escolhido */
+  flavor?: string | undefined;
   /** Preço unitário já com adicionais */
   unitPrice: number;
 }
@@ -22,7 +22,7 @@ export interface CustomizationInput {
   observation?: string;
   removed?: string[];
   added?: ExtraOption[];
-  flavor?: string;
+  flavor?: string | undefined;
 }
 
 function makeLineId() {
