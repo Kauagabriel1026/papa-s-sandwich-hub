@@ -1,16 +1,19 @@
-import { Plus, Flame } from "lucide-react";
+import { Plus, Flame, SlidersHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { type MenuItem } from "@/data/menu";
 import { formatCurrency } from "@/lib/format";
+import { isCustomizable } from "@/lib/customize";
 
 interface MenuItemCardProps {
   item: MenuItem;
   onAdd: (item: MenuItem) => void;
+  onCustomize?: (item: MenuItem) => void;
 }
 
-export function MenuItemCard({ item, onAdd }: MenuItemCardProps) {
+export function MenuItemCard({ item, onAdd, onCustomize }: MenuItemCardProps) {
+  const customizable = isCustomizable(item) && !!onCustomize;
   return (
     <Card className="group flex flex-col overflow-hidden border border-border bg-card transition-shadow hover:shadow-md">
       {item.image && (
@@ -55,14 +58,25 @@ export function MenuItemCard({ item, onAdd }: MenuItemCardProps) {
           <span className="text-lg font-bold text-foreground">
             {formatCurrency(item.price)}
           </span>
-          <Button
-            size="sm"
-            onClick={() => onAdd(item)}
-            className="gap-1 bg-primary text-primary-foreground hover:bg-primary/90"
-          >
-            <Plus className="h-4 w-4" />
-            Adicionar
-          </Button>
+          {customizable ? (
+            <Button
+              size="sm"
+              onClick={() => onCustomize?.(item)}
+              className="gap-1 bg-primary text-primary-foreground hover:bg-primary/90"
+            >
+              <SlidersHorizontal className="h-4 w-4" />
+              Montar
+            </Button>
+          ) : (
+            <Button
+              size="sm"
+              onClick={() => onAdd(item)}
+              className="gap-1 bg-primary text-primary-foreground hover:bg-primary/90"
+            >
+              <Plus className="h-4 w-4" />
+              Adicionar
+            </Button>
+          )}
         </div>
       </CardContent>
     </Card>
