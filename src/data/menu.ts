@@ -11,6 +11,9 @@ import imgCreme from "@/assets/image-21.png.asset.json";
 import imgBatataG from "@/assets/image-22.png.asset.json";
 import imgComboFritas from "@/assets/image-23.png.asset.json";
 import imgSucoPolpa from "@/assets/image-24.png.asset.json";
+import imgSand1 from "@/assets/image-25.png.asset.json";
+import imgSand2 from "@/assets/image-26.png.asset.json";
+import imgSand3 from "@/assets/image-27.png.asset.json";
 import promoSegunda from "@/assets/image-13.png.asset.json";
 import promoXtudoLata from "@/assets/image-14.png.asset.json";
 import promoXbacon from "@/assets/image-15.png.asset.json";
@@ -137,30 +140,30 @@ export const menuItems: MenuItem[] = [
 
   // ── Hambúrguer ─────────────────────────────
   { id: "hb-simples", name: "X-Simples", description: baseH, price: 19.5, category: "hamburguer", image: imgHamburguer.url },
-  { id: "hb-especial", name: "X-Especial", description: ovo(baseH), price: 20.5, category: "hamburguer" },
-  { id: "hb-bacon-simples", name: "X-Bacon Simples", description: bacon(baseH), price: 21.5, category: "hamburguer" },
-  { id: "hb-bacon-especial", name: "X-Bacon Especial", description: baconOvo(baseH), price: 22.5, category: "hamburguer" },
-  { id: "hb-rango-simples", name: "X-Rango Simples", description: rango(baseH), price: 20.5, category: "hamburguer" },
-  { id: "hb-rango-especial", name: "X-Rango Especial", description: rangoOvo(baseH), price: 21.5, category: "hamburguer" },
-  { id: "hb-tudo", name: "X-Tudo", description: baconOvo(baseH), price: 23.0, category: "hamburguer", popular: true },
+  { id: "hb-especial", name: "X-Especial", description: ovo(baseH), price: 20.5, category: "hamburguer", image: imgSand1.url },
+  { id: "hb-bacon-simples", name: "X-Bacon Simples", description: bacon(baseH), price: 21.5, category: "hamburguer", image: imgSand2.url },
+  { id: "hb-bacon-especial", name: "X-Bacon Especial", description: baconOvo(baseH), price: 22.5, category: "hamburguer", image: imgSand3.url },
+  { id: "hb-rango-simples", name: "X-Rango Simples", description: rango(baseH), price: 20.5, category: "hamburguer", image: imgSand1.url },
+  { id: "hb-rango-especial", name: "X-Rango Especial", description: rangoOvo(baseH), price: 21.5, category: "hamburguer", image: imgSand2.url },
+  { id: "hb-tudo", name: "X-Tudo", description: baconOvo(baseH), price: 23.0, category: "hamburguer", popular: true, image: imgSand3.url },
 
   // ── Lombo ─────────────────────────────
   { id: "lb-simples", name: "X-Simples", description: baseL, price: 21.5, category: "lombo", image: imgLombo.url },
-  { id: "lb-especial", name: "X-Especial", description: ovo(baseL), price: 22.5, category: "lombo" },
-  { id: "lb-bacon-simples", name: "X-Bacon Simples", description: bacon(baseL), price: 23.5, category: "lombo" },
-  { id: "lb-bacon-especial", name: "X-Bacon Especial", description: baconOvo(baseL), price: 24.5, category: "lombo" },
-  { id: "lb-rango-simples", name: "X-Rango Simples", description: rango(baseL), price: 22.5, category: "lombo" },
-  { id: "lb-rango-especial", name: "X-Rango Especial", description: rangoOvo(baseL), price: 24.5, category: "lombo" },
-  { id: "lb-tudo", name: "X-Tudo", description: baconOvo(baseL), price: 25.0, category: "lombo", popular: true },
+  { id: "lb-especial", name: "X-Especial", description: ovo(baseL), price: 22.5, category: "lombo", image: imgSand2.url },
+  { id: "lb-bacon-simples", name: "X-Bacon Simples", description: bacon(baseL), price: 23.5, category: "lombo", image: imgSand3.url },
+  { id: "lb-bacon-especial", name: "X-Bacon Especial", description: baconOvo(baseL), price: 24.5, category: "lombo", image: imgSand1.url },
+  { id: "lb-rango-simples", name: "X-Rango Simples", description: rango(baseL), price: 22.5, category: "lombo", image: imgSand2.url },
+  { id: "lb-rango-especial", name: "X-Rango Especial", description: rangoOvo(baseL), price: 24.5, category: "lombo", image: imgSand3.url },
+  { id: "lb-tudo", name: "X-Tudo", description: baconOvo(baseL), price: 25.0, category: "lombo", popular: true, image: imgSand1.url },
 
   // ── Filé de Frango ─────────────────────────────
   { id: "fr-simples", name: "X-Simples", description: baseF, price: 20.5, category: "frango", image: imgFrango.url },
-  { id: "fr-especial", name: "X-Especial", description: ovo(baseF), price: 21.5, category: "frango" },
-  { id: "fr-bacon-simples", name: "X-Bacon Simples", description: bacon(baseF), price: 22.5, category: "frango" },
-  { id: "fr-bacon-especial", name: "X-Bacon Especial", description: baconOvo(baseF), price: 23.5, category: "frango" },
-  { id: "fr-rango-simples", name: "X-Rango Simples", description: rango(baseF), price: 21.5, category: "frango" },
-  { id: "fr-rango-especial", name: "X-Rango Especial", description: rangoOvo(baseF), price: 22.5, category: "frango" },
-  { id: "fr-tudo", name: "X-Tudo", description: baconOvo(baseF), price: 24.0, category: "frango" },
+  { id: "fr-especial", name: "X-Especial", description: ovo(baseF), price: 21.5, category: "frango", image: imgSand3.url },
+  { id: "fr-bacon-simples", name: "X-Bacon Simples", description: bacon(baseF), price: 22.5, category: "frango", image: imgSand1.url },
+  { id: "fr-bacon-especial", name: "X-Bacon Especial", description: baconOvo(baseF), price: 23.5, category: "frango", image: imgSand2.url },
+  { id: "fr-rango-simples", name: "X-Rango Simples", description: rango(baseF), price: 21.5, category: "frango", image: imgSand3.url },
+  { id: "fr-rango-especial", name: "X-Rango Especial", description: rangoOvo(baseF), price: 22.5, category: "frango", image: imgSand1.url },
+  { id: "fr-tudo", name: "X-Tudo", description: baconOvo(baseF), price: 24.0, category: "frango", image: imgSand2.url },
 
   // ── Porções ─────────────────────────────
   { id: "bt-simples-p", name: "Batata Simples (P)", description: "Porção pequena de batata frita.", price: 16.0, category: "porcoes", image: imgComboFritas.url },
