@@ -6,6 +6,10 @@ import imgAnel from "@/assets/image-2.png.asset.json";
 import imgBatata from "@/assets/image-6.png.asset.json";
 import imgAcai1 from "@/assets/image-18.png.asset.json";
 import imgAcai2 from "@/assets/image-19.png.asset.json";
+import imgNuggets from "@/assets/image-20.png.asset.json";
+import imgCreme from "@/assets/image-21.png.asset.json";
+import imgBatataG from "@/assets/image-22.png.asset.json";
+import imgComboFritas from "@/assets/image-23.png.asset.json";
 import promoSegunda from "@/assets/image-13.png.asset.json";
 import promoXtudoLata from "@/assets/image-14.png.asset.json";
 import promoXbacon from "@/assets/image-15.png.asset.json";
@@ -158,20 +162,20 @@ export const menuItems: MenuItem[] = [
   { id: "fr-tudo", name: "X-Tudo", description: baconOvo(baseF), price: 24.0, category: "frango" },
 
   // ── Porções ─────────────────────────────
-  { id: "bt-simples-p", name: "Batata Simples (P)", description: "Porção pequena de batata frita.", price: 16.0, category: "porcoes" },
+  { id: "bt-simples-p", name: "Batata Simples (P)", description: "Porção pequena de batata frita.", price: 16.0, category: "porcoes", image: imgComboFritas.url },
   { id: "bt-recheada-p", name: "Batata Recheada (P)", description: "Acompanha cheddar, mussarela, bacon e calabresa.", price: 22.0, category: "porcoes", image: imgBatata.url, popular: true },
   { id: "bt-simples-m", name: "Batata Simples (M)", description: "Porção média de batata frita.", price: 19.0, category: "porcoes" },
   { id: "bt-recheada-m", name: "Batata Recheada (M)", description: "Acompanha cheddar, mussarela, bacon e calabresa.", price: 24.5, category: "porcoes" },
   { id: "bt-simples-g", name: "Batata Simples (G)", description: "Porção grande de batata frita.", price: 21.5, category: "porcoes" },
-  { id: "bt-recheada-g", name: "Batata Recheada (G)", description: "Acompanha cheddar, mussarela, bacon e calabresa.", price: 27.0, category: "porcoes" },
+  { id: "bt-recheada-g", name: "Batata Recheada (G)", description: "Acompanha cheddar, mussarela, bacon e calabresa.", price: 27.0, category: "porcoes", image: imgBatataG.url },
   { id: "cebola-p", name: "Cebola Empanada (P)", description: "Porção pequena de anéis de cebola empanados.", price: 16.0, category: "porcoes", image: imgAnel.url },
   { id: "cebola-m", name: "Cebola Empanada (M)", description: "Porção média de anéis de cebola empanados.", price: 23.0, category: "porcoes" },
-  { id: "nuggets-p", name: "Nuggets (P)", description: "Porção pequena de nuggets de frango.", price: 12.0, category: "porcoes" },
+  { id: "nuggets-p", name: "Nuggets (P)", description: "Porção pequena de nuggets de frango.", price: 12.0, category: "porcoes", image: imgNuggets.url },
 
   // ── Açaí, cremes e sucos ─────────────────────────────
   { id: "acai-350", name: "Açaí 350ml", description: "Monte com os adicionais da casa.", price: 20.0, category: "acai", image: imgAcai2.url },
   { id: "acai-500", name: "Açaí 500ml", description: "Monte com os adicionais da casa.", price: 25.0, category: "acai", popular: true, image: imgAcai1.url },
-  { id: "creme-500", name: "Creme 500ml", description: "Escolha o sabor na observação do pedido.", price: 13.0, category: "acai" },
+  { id: "creme-500", name: "Creme 500ml", description: "Escolha o sabor na observação do pedido.", price: 13.0, category: "acai", image: imgCreme.url },
   { id: "suco-polpa-500", name: "Suco de Polpa 500ml", description: "Escolha o sabor na observação do pedido.", price: 10.5, category: "acai" },
 
   // ── Bebidas ─────────────────────────────
