@@ -10,6 +10,7 @@ import imgNuggets from "@/assets/image-20.png.asset.json";
 import imgCreme from "@/assets/image-21.png.asset.json";
 import imgBatataG from "@/assets/image-22.png.asset.json";
 import imgComboFritas from "@/assets/image-23.png.asset.json";
+import imgSucoPolpa from "@/assets/image-24.png.asset.json";
 import promoSegunda from "@/assets/image-13.png.asset.json";
 import promoXtudoLata from "@/assets/image-14.png.asset.json";
 import promoXbacon from "@/assets/image-15.png.asset.json";
