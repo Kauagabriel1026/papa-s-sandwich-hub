@@ -67,7 +67,7 @@ function Index() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="sticky top-0 z-40 border-b border-border bg-background/80 backdrop-blur-md">
+      <header className="sticky top-0 z-40 border-b border-border bg-background sm:bg-background/80 sm:backdrop-blur-md">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
           <div className="flex items-center gap-2">
             <img
@@ -139,7 +139,7 @@ function Index() {
 
           <div className="order-1 flex justify-center md:order-2">
             <div className="relative">
-              <div className="absolute -inset-4 rounded-full bg-brand/10 blur-3xl" />
+              <div className="absolute -inset-4 hidden rounded-full bg-brand/10 blur-3xl sm:block" />
               <img
                 src={mascote.url}
                 alt="Mascote PapaLéguas Burguer"
@@ -167,7 +167,7 @@ function Index() {
           </p>
         </div>
 
-        <div className="sticky top-[73px] z-30 -mx-4 bg-background/95 px-4 py-3 backdrop-blur-md">
+        <div className="sticky top-[72px] z-30 -mx-4 bg-background px-4 py-3 sm:bg-background/95 sm:backdrop-blur-md">
           <CategoryTabs active={activeCategory} onChange={setActiveCategory} />
         </div>
 
