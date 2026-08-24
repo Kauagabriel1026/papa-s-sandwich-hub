@@ -1,14 +1,33 @@
-import { Minus, Plus, ShoppingBag, Trash2, Send, MapPin, User, CreditCard } from "lucide-react";
+import {
+  Minus,
+  Plus,
+  ShoppingBag,
+  Trash2,
+  Send,
+  MapPin,
+  User,
+  CreditCard,
+  Banknote,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 import { type CartItem } from "@/hooks/use-cart";
 import { formatCurrency } from "@/lib/format";
+import { STORE_NAME, WHATSAPP_NUMBER } from "@/lib/site";
+import { PAYMENT_METHODS, needsChange, parseAmount, type PaymentMethod } from "@/lib/payment";
 import { useState } from "react";
 
 interface CartSheetProps {
@@ -21,8 +40,6 @@ interface CartSheetProps {
   onClear: () => void;
 }
 
-const WHATSAPP_NUMBER = "5562995513839";
-
 export function CartSheet({
   items,
   totalItems,
@@ -34,33 +51,49 @@ export function CartSheet({
 }: CartSheetProps) {
   const [customerName, setCustomerName] = useState("");
   const [address, setAddress] = useState("");
-  const [paymentMethod, setPaymentMethod] = useState("Pix");
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("Pix");
+  const [changeFor, setChangeFor] = useState("");
   const [open, setOpen] = useState(false);
 
+  // Troco: só faz sentido no dinheiro. Campo vazio = cliente leva o valor exato.
+  const showChangeField = needsChange(paymentMethod);
+  const changeForValue = showChangeField ? parseAmount(changeFor) : null;
+  const changeIsInvalid =
+    showChangeField &&
+    changeFor.trim() !== "" &&
+    (changeForValue === null || changeForValue < totalPrice);
+  const changeDue =
+    changeForValue !== null && changeForValue >= totalPrice ? changeForValue - totalPrice : null;
+
   const handleSendOrder = () => {
-    if (items.length === 0) return;
+    if (items.length === 0 || changeIsInvalid) return;
 
     const orderLines = items
-      .map(
-        (i) =>
-          [
-            `${i.quantity}x ${i.item.name} — ${formatCurrency(i.unitPrice * i.quantity)}`,
-            i.flavor ? `   • Sabor: ${i.flavor}` : "",
-            i.removed.length ? `   • Sem: ${i.removed.join(", ")}` : "",
-            i.added.length
-              ? `   • Adicionais: ${i.added
-                  .map((e) => (e.price > 0 ? `${e.name} (+${formatCurrency(e.price)})` : e.name))
-                  .join(", ")}`
-              : "",
-            i.observation ? `   • Obs.: ${i.observation}` : "",
-          ]
-            .filter(Boolean)
-            .join("\n")
+      .map((i) =>
+        [
+          `${i.quantity}x ${i.item.name} — ${formatCurrency(i.unitPrice * i.quantity)}`,
+          i.flavor ? `   • Sabor: ${i.flavor}` : "",
+          i.removed.length ? `   • Sem: ${i.removed.join(", ")}` : "",
+          i.added.length
+            ? `   • Adicionais: ${i.added
+                .map((e) => (e.price > 0 ? `${e.name} (+${formatCurrency(e.price)})` : e.name))
+                .join(", ")}`
+            : "",
+          i.observation ? `   • Obs.: ${i.observation}` : "",
+        ]
+          .filter(Boolean)
+          .join("\n"),
       )
       .join("\n");
 
+    const paymentLine = showChangeField
+      ? changeDue !== null
+        ? `*Pagamento:* Dinheiro — troco para ${formatCurrency(changeForValue!)} (levar ${formatCurrency(changeDue)} de troco)`
+        : `*Pagamento:* Dinheiro — valor exato, não precisa de troco`
+      : `*Pagamento:* ${paymentMethod}`;
+
     const message = [
-      `Olá! Gostaria de fazer um pedido na PapaLéguas Burguer:`,
+      `Olá! Gostaria de fazer um pedido na ${STORE_NAME}:`,
       "",
       orderLines,
       "",
@@ -68,7 +101,7 @@ export function CartSheet({
       "",
       `*Nome:* ${customerName || "Não informado"}`,
       `*Endereço:* ${address || "Retirada no local"}`,
-      `*Pagamento:* ${paymentMethod}`,
+      paymentLine,
     ].join("\n");
 
     const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
@@ -109,12 +142,13 @@ export function CartSheet({
             <ScrollArea className="my-4 flex-1 pr-2">
               <div className="space-y-4">
                 {items.map((cartItem) => (
-                  <div key={cartItem.lineId} className="rounded-xl border border-border bg-card p-3">
+                  <div
+                    key={cartItem.lineId}
+                    className="rounded-xl border border-border bg-card p-3"
+                  >
                     <div className="flex items-start justify-between gap-3">
                       <div className="flex-1">
-                        <h4 className="font-semibold text-card-foreground">
-                          {cartItem.item.name}
-                        </h4>
+                        <h4 className="font-semibold text-card-foreground">{cartItem.item.name}</h4>
                         <p className="text-sm text-muted-foreground">
                           {formatCurrency(cartItem.unitPrice)} cada
                         </p>
@@ -214,14 +248,56 @@ export function CartSheet({
                 <Label htmlFor="payment" className="flex items-center gap-1.5 text-sm font-medium">
                   <CreditCard className="h-3.5 w-3.5" /> Forma de pagamento
                 </Label>
-                <Input
-                  id="payment"
+                <Select
                   value={paymentMethod}
-                  onChange={(e) => setPaymentMethod(e.target.value)}
-                  placeholder="Pix, dinheiro, cartão..."
-                  maxLength={30}
-                />
+                  onValueChange={(v) => {
+                    setPaymentMethod(v as PaymentMethod);
+                    setChangeFor("");
+                  }}
+                >
+                  <SelectTrigger id="payment">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {PAYMENT_METHODS.map((method) => (
+                      <SelectItem key={method} value={method}>
+                        {method}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
+
+              {showChangeField && (
+                <div className="space-y-1.5">
+                  <Label htmlFor="change" className="flex items-center gap-1.5 text-sm font-medium">
+                    <Banknote className="h-3.5 w-3.5" /> Troco para quanto?
+                  </Label>
+                  <Input
+                    id="change"
+                    value={changeFor}
+                    onChange={(e) => setChangeFor(e.target.value)}
+                    placeholder={`Ex.: ${Math.ceil(totalPrice / 10) * 10}`}
+                    inputMode="decimal"
+                    maxLength={10}
+                    aria-invalid={changeIsInvalid}
+                  />
+                  {changeIsInvalid ? (
+                    <p className="text-xs font-medium text-destructive">
+                      O valor precisa ser maior que o total do pedido ({formatCurrency(totalPrice)}
+                      ).
+                    </p>
+                  ) : changeDue !== null ? (
+                    <p className="text-xs font-medium text-brand">
+                      Troco de {formatCurrency(changeDue)}.
+                    </p>
+                  ) : (
+                    <p className="text-xs text-muted-foreground">
+                      Deixe em branco se for pagar o valor exato.
+                    </p>
+                  )}
+                </div>
+              )}
             </div>
 
             <Separator />
@@ -234,6 +310,7 @@ export function CartSheet({
 
               <Button
                 onClick={handleSendOrder}
+                disabled={changeIsInvalid}
                 className="w-full gap-2 bg-[#25D366] text-white hover:bg-[#1DA851]"
                 size="lg"
               >

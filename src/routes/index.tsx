@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useMemo } from "react";
-import { Phone, Clock, MapPin, ChevronDown } from "lucide-react";
+import { Phone, MapPin, ChevronDown } from "lucide-react";
 
 import { menuItems, gratis, acaiAdicionais, sabores, type Category } from "@/data/menu";
 import { useCart } from "@/hooks/use-cart";
@@ -8,8 +8,11 @@ import { CategoryTabs } from "@/components/CategoryTabs";
 import { MenuItemCard } from "@/components/MenuItemCard";
 import { CartSheet } from "@/components/CartSheet";
 import { ItemCustomizer } from "@/components/ItemCustomizer";
+import { OpenStatusBadge } from "@/components/OpenStatusBadge";
+import { ShareButton } from "@/components/ShareButton";
 import { type MenuItem } from "@/data/menu";
 import { Button } from "@/components/ui/button";
+import { PHONE_DISPLAY, STORE_NAME, TEL_URL, WHATSAPP_URL } from "@/lib/site";
 import heroBurger from "@/assets/image-7.png.asset.json";
 import mascote from "@/assets/image-17.png.asset.json";
 
@@ -25,8 +28,7 @@ export const Route = createFileRoute("/")({
       { property: "og:title", content: "PapaLéguas Burguer — Cardápio Digital" },
       {
         property: "og:description",
-        content:
-          "Sanduíches artesanais, combos, batatas e açaí. Peça agora pelo WhatsApp!",
+        content: "Sanduíches artesanais, combos, batatas e açaí. Peça agora pelo WhatsApp!",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -57,7 +59,7 @@ function Index() {
 
   const filteredItems = useMemo(
     () => menuItems.filter((item) => item.category === activeCategory),
-    [activeCategory]
+    [activeCategory],
   );
 
   const scrollToMenu = () => {
@@ -79,15 +81,18 @@ function Index() {
               PapaLéguas <span className="text-primary">Burguer</span>
             </span>
           </div>
-          <a
-            href="https://wa.me/5562995513839"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
-          >
-            <Phone className="h-4 w-4" />
-            (62) 99551-3839
-          </a>
+          <div className="flex items-center gap-2">
+            <ShareButton compact />
+            <a
+              href={WHATSAPP_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+            >
+              <Phone className="h-4 w-4" />
+              <span className="hidden sm:inline">{PHONE_DISPLAY}</span>
+            </a>
+          </div>
         </div>
       </header>
 
@@ -115,7 +120,7 @@ function Index() {
                 <ChevronDown className="h-4 w-4" />
               </Button>
               <a
-                href="https://wa.me/5562995513839"
+                href={WHATSAPP_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 rounded-full border border-border bg-background px-6 py-3 text-base font-semibold text-foreground transition-colors hover:bg-accent"
@@ -123,13 +128,11 @@ function Index() {
                 <Phone className="h-4 w-4" />
                 Falar no WhatsApp
               </a>
+              <ShareButton />
             </div>
 
             <div className="mt-10 flex flex-wrap items-center gap-6 text-sm text-muted-foreground">
-              <div className="flex items-center gap-1.5">
-                <Clock className="h-4 w-4 text-primary" />
-                <span>Aberto agora</span>
-              </div>
+              <OpenStatusBadge />
               <div className="flex items-center gap-1.5">
                 <MapPin className="h-4 w-4 text-primary" />
                 <span>Retirada ou entrega</span>
@@ -159,9 +162,7 @@ function Index() {
       <main id="cardapio" className="mx-auto max-w-6xl px-4 py-16">
         <div className="mb-8 text-center">
           <h2 className="text-3xl font-bold tracking-tight text-foreground">Nosso cardápio</h2>
-          <p className="mt-2 text-muted-foreground">
-            Escolha seus favoritos e monte seu pedido.
-          </p>
+          <p className="mt-2 text-muted-foreground">Escolha seus favoritos e monte seu pedido.</p>
           <p className="mx-auto mt-3 max-w-md rounded-full bg-brand-subtle px-4 py-2 text-sm font-medium text-brand">
             Grátis em todos os sanduíches: {gratis.join(", ")}
           </p>
@@ -217,17 +218,18 @@ function Index() {
           <p className="mt-3 text-sm text-muted-foreground">
             Cardápio digital — Monte seu pedido e envie pelo WhatsApp.
           </p>
-          <div className="mt-4 flex items-center justify-center gap-4 text-sm text-muted-foreground">
+          <div className="mt-4 flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-sm text-muted-foreground">
             <a
-              href="tel:+5562995513839"
+              href={TEL_URL}
               className="flex items-center gap-1.5 transition-colors hover:text-primary"
             >
               <Phone className="h-4 w-4" />
-              (62) 99551-3839
+              {PHONE_DISPLAY}
             </a>
+            <OpenStatusBadge />
           </div>
           <p className="mt-6 text-xs text-muted-foreground">
-            © {new Date().getFullYear()} PapaLéguas Burguer. Todos os direitos reservados.
+            © {new Date().getFullYear()} {STORE_NAME}. Todos os direitos reservados.
           </p>
         </div>
       </footer>

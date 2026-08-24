@@ -133,3 +133,32 @@
     text-wrap: balance;
   }
 }
+
+/* ── Cores dos gráficos do painel ──────────────────────────────────────────
+   Paleta validada: cada par vizinho mantém separação suficiente para quem tem
+   daltonismo (ΔE ≥ 8 em OKLab) e contraste contra o fundo do card.
+   Se for trocar por cores "mais bonitas", revalide antes — duas cores que
+   parecem diferentes para você podem ser indistinguíveis para 1 em cada 12
+   homens. As barras sempre levam o valor escrito ao lado, então a cor nunca é
+   a única pista de qual é qual. */
+:root {
+  --viz-pix: #2a78d6;
+  --viz-dinheiro: #eb6834;
+  --viz-debito: #1baf7a;
+  --viz-credito: #eda100;
+  --viz-entrada: #2a78d6;
+  --viz-saida: #e34948;
+  --viz-grid: oklch(0.91 0 0);
+  --viz-axis: oklch(0.55 0 0);
+}
+
+.dark {
+  --viz-pix: #3987e5;
+  --viz-dinheiro: #d95926;
+  --viz-debito: #199e70;
+  --viz-credito: #c98500;
+  --viz-entrada: #3987e5;
+  --viz-saida: #e66767;
+  --viz-grid: oklch(0.32 0 0);
+  --viz-axis: oklch(0.7 0 0);
+}
