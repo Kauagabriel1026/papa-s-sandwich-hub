@@ -1,14 +1,4 @@
-import {
-  Minus,
-  Plus,
-  ShoppingBag,
-  Trash2,
-  Send,
-  MapPin,
-  User,
-  CreditCard,
-  Banknote,
-} from "lucide-react";
+import { Minus, Plus, ShoppingBag, Trash2, Send, User, CreditCard, Banknote } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -25,6 +15,8 @@ import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 import { type CartItem } from "@/hooks/use-cart";
+import { useDelivery } from "@/hooks/use-delivery";
+import { DeliveryFields } from "@/components/DeliveryFields";
 import { formatCurrency } from "@/lib/format";
 import { STORE_NAME, WHATSAPP_NUMBER } from "@/lib/site";
 import { PAYMENT_METHODS, needsChange, parseAmount, type PaymentMethod } from "@/lib/payment";
@@ -50,7 +42,7 @@ export function CartSheet({
   onClear,
 }: CartSheetProps) {
   const [customerName, setCustomerName] = useState("");
-  const [address, setAddress] = useState("");
+  const delivery = useDelivery();
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("Pix");
   const [changeFor, setChangeFor] = useState("");
   const [open, setOpen] = useState(false);
@@ -100,7 +92,9 @@ export function CartSheet({
       `*Total:* ${formatCurrency(totalPrice)}`,
       "",
       `*Nome:* ${customerName || "Não informado"}`,
-      `*Endereço:* ${address || "Retirada no local"}`,
+      "",
+      ...delivery.buildAddressLines(),
+      "",
       paymentLine,
     ].join("\n");
 
@@ -209,99 +203,95 @@ export function CartSheet({
                   </div>
                 ))}
               </div>
+
+              {/* Os campos de cadastro moram DENTRO da área que rola.
+                  Se ficarem fora, com entrega escolhida eles crescem e empurram
+                  o botão de enviar para fora da tela, sem como alcançá-lo. */}
+              <Separator className="my-4" />
+
+              <div className="space-y-3 pb-2">
+                <div className="space-y-1.5">
+                  <Label htmlFor="name" className="flex items-center gap-1.5 text-sm font-medium">
+                    <User className="h-3.5 w-3.5" /> Nome
+                  </Label>
+                  <Input
+                    id="name"
+                    value={customerName}
+                    onChange={(e) => setCustomerName(e.target.value)}
+                    placeholder="Seu nome"
+                    maxLength={60}
+                  />
+                </div>
+
+                <DeliveryFields delivery={delivery} />
+
+                <div className="space-y-1.5">
+                  <Label
+                    htmlFor="payment"
+                    className="flex items-center gap-1.5 text-sm font-medium"
+                  >
+                    <CreditCard className="h-3.5 w-3.5" /> Forma de pagamento
+                  </Label>
+                  <Select
+                    value={paymentMethod}
+                    onValueChange={(v) => {
+                      setPaymentMethod(v as PaymentMethod);
+                      setChangeFor("");
+                    }}
+                  >
+                    <SelectTrigger id="payment">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {PAYMENT_METHODS.map((method) => (
+                        <SelectItem key={method} value={method}>
+                          {method}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {showChangeField && (
+                  <div className="space-y-1.5">
+                    <Label
+                      htmlFor="change"
+                      className="flex items-center gap-1.5 text-sm font-medium"
+                    >
+                      <Banknote className="h-3.5 w-3.5" /> Troco para quanto?
+                    </Label>
+                    <Input
+                      id="change"
+                      value={changeFor}
+                      onChange={(e) => setChangeFor(e.target.value)}
+                      placeholder={`Ex.: ${Math.ceil(totalPrice / 10) * 10}`}
+                      inputMode="decimal"
+                      maxLength={10}
+                      aria-invalid={changeIsInvalid}
+                    />
+                    {changeIsInvalid ? (
+                      <p className="text-xs font-medium text-destructive">
+                        O valor precisa ser maior que o total do pedido (
+                        {formatCurrency(totalPrice)}
+                        ).
+                      </p>
+                    ) : changeDue !== null ? (
+                      <p className="text-xs font-medium text-brand">
+                        Troco de {formatCurrency(changeDue)}.
+                      </p>
+                    ) : (
+                      <p className="text-xs text-muted-foreground">
+                        Deixe em branco se for pagar o valor exato.
+                      </p>
+                    )}
+                  </div>
+                )}
+              </div>
             </ScrollArea>
 
             <Separator />
 
-            <div className="space-y-3 py-2">
-              <div className="space-y-1.5">
-                <Label htmlFor="name" className="flex items-center gap-1.5 text-sm font-medium">
-                  <User className="h-3.5 w-3.5" /> Nome
-                </Label>
-                <Input
-                  id="name"
-                  value={customerName}
-                  onChange={(e) => setCustomerName(e.target.value)}
-                  placeholder="Seu nome"
-                  maxLength={60}
-                />
-              </div>
-
-              <div className="space-y-1.5">
-                <Label htmlFor="address" className="flex items-center gap-1.5 text-sm font-medium">
-                  <MapPin className="h-3.5 w-3.5" /> Endereço de entrega
-                </Label>
-                <Textarea
-                  id="address"
-                  value={address}
-                  onChange={(e) => setAddress(e.target.value)}
-                  placeholder="Rua, número, bairro e ponto de referência"
-                  maxLength={300}
-                  className="min-h-[60px] resize-none"
-                />
-                <p className="text-xs text-muted-foreground">
-                  Deixe em branco para retirada no local.
-                </p>
-              </div>
-
-              <div className="space-y-1.5">
-                <Label htmlFor="payment" className="flex items-center gap-1.5 text-sm font-medium">
-                  <CreditCard className="h-3.5 w-3.5" /> Forma de pagamento
-                </Label>
-                <Select
-                  value={paymentMethod}
-                  onValueChange={(v) => {
-                    setPaymentMethod(v as PaymentMethod);
-                    setChangeFor("");
-                  }}
-                >
-                  <SelectTrigger id="payment">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {PAYMENT_METHODS.map((method) => (
-                      <SelectItem key={method} value={method}>
-                        {method}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {showChangeField && (
-                <div className="space-y-1.5">
-                  <Label htmlFor="change" className="flex items-center gap-1.5 text-sm font-medium">
-                    <Banknote className="h-3.5 w-3.5" /> Troco para quanto?
-                  </Label>
-                  <Input
-                    id="change"
-                    value={changeFor}
-                    onChange={(e) => setChangeFor(e.target.value)}
-                    placeholder={`Ex.: ${Math.ceil(totalPrice / 10) * 10}`}
-                    inputMode="decimal"
-                    maxLength={10}
-                    aria-invalid={changeIsInvalid}
-                  />
-                  {changeIsInvalid ? (
-                    <p className="text-xs font-medium text-destructive">
-                      O valor precisa ser maior que o total do pedido ({formatCurrency(totalPrice)}
-                      ).
-                    </p>
-                  ) : changeDue !== null ? (
-                    <p className="text-xs font-medium text-brand">
-                      Troco de {formatCurrency(changeDue)}.
-                    </p>
-                  ) : (
-                    <p className="text-xs text-muted-foreground">
-                      Deixe em branco se for pagar o valor exato.
-                    </p>
-                  )}
-                </div>
-              )}
-            </div>
-
-            <Separator />
-
+            {/* Total e botão de enviar ficam ancorados no rodapé, sempre à mão. */}
             <div className="space-y-3 pt-2">
               <div className="flex items-center justify-between text-lg font-bold">
                 <span>Total</span>
