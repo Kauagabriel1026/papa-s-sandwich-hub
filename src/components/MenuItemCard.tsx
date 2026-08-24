@@ -21,6 +21,7 @@ export function MenuItemCard({ item, onAdd, onCustomize }: MenuItemCardProps) {
           src={item.image}
           alt={item.name}
           loading="lazy"
+          decoding="async"
           className={
             item.category === "promocoes"
               ? "w-full bg-secondary object-contain"
