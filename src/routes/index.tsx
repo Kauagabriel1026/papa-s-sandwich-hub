@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useMemo } from "react";
-import { Phone, MapPin, ChevronDown } from "lucide-react";
+import { Phone, MapPin, ChevronDown, CalendarClock } from "lucide-react";
 
 import { menuItems, gratis, acaiAdicionais, sabores, type Category } from "@/data/menu";
 import { useCart } from "@/hooks/use-cart";
@@ -12,6 +12,8 @@ import { OpenStatusBadge } from "@/components/OpenStatusBadge";
 import { ShareButton } from "@/components/ShareButton";
 import { type MenuItem } from "@/data/menu";
 import { Button } from "@/components/ui/button";
+import { useWeekday } from "@/hooks/use-weekday";
+import { isAvailableOn, nextAvailabilityLabel } from "@/lib/schedule";
 import { PHONE_DISPLAY, STORE_NAME, TEL_URL, WHATSAPP_URL } from "@/lib/site";
 import heroBurger from "@/assets/image-7.png.asset.json";
 import mascote from "@/assets/image-17.png.asset.json";
@@ -57,10 +59,34 @@ function Index() {
     totalPrice,
   } = useCart();
 
-  const filteredItems = useMemo(
-    () => menuItems.filter((item) => item.category === activeCategory),
-    [activeCategory],
-  );
+  const weekday = useWeekday();
+
+  /**
+   * Separa os itens da categoria em dois grupos: os que estão à venda hoje e os
+   * que têm dia marcado e não é hoje. Os de fora não somem em silêncio — eles
+   * viram o aviso de "volta na segunda" logo abaixo da lista, que dá ao cliente
+   * um motivo para voltar em vez de só uma ausência inexplicada.
+   */
+  const { availableItems, unavailableItems } = useMemo(() => {
+    const ofCategory = menuItems.filter((item) => item.category === activeCategory);
+    return {
+      availableItems: ofCategory.filter((item) => isAvailableOn(item.availableWeekdays, weekday)),
+      unavailableItems: ofCategory.filter(
+        (item) => !isAvailableOn(item.availableWeekdays, weekday),
+      ),
+    };
+  }, [activeCategory, weekday]);
+
+  /** Agrupa por quando volta, para não repetir a mesma frase três vezes. */
+  const returnGroups = useMemo(() => {
+    const groups = new Map<string, number>();
+    for (const item of unavailableItems) {
+      const label = nextAvailabilityLabel(item.availableWeekdays, weekday);
+      if (!label) continue;
+      groups.set(label, (groups.get(label) ?? 0) + 1);
+    }
+    return [...groups.entries()];
+  }, [unavailableItems, weekday]);
 
   const scrollToMenu = () => {
     document.getElementById("cardapio")?.scrollIntoView({ behavior: "smooth" });
@@ -190,14 +216,37 @@ function Index() {
         )}
 
         <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {filteredItems.map((item) => (
+          {availableItems.map((item) => (
             <MenuItemCard key={item.id} item={item} onAdd={addItem} onCustomize={openCustomizer} />
           ))}
         </div>
 
-        {filteredItems.length === 0 && (
+        {availableItems.length === 0 && returnGroups.length === 0 && (
           <div className="py-20 text-center text-muted-foreground">
             Nenhum item encontrado nesta categoria.
+          </div>
+        )}
+
+        {returnGroups.length > 0 && (
+          <div
+            className={`rounded-2xl border border-dashed border-border bg-secondary/40 p-5 text-center ${
+              availableItems.length > 0 ? "mt-6" : "mt-8"
+            }`}
+          >
+            <CalendarClock className="mx-auto h-5 w-5 text-primary" />
+            <ul className="mt-2 space-y-1">
+              {returnGroups.map(([label, count]) => (
+                <li key={label} className="text-sm text-muted-foreground">
+                  <span className="font-semibold text-foreground">
+                    {count === 1 ? "1 promoção" : `${count} promoções`}
+                  </span>{" "}
+                  {count === 1 ? "volta" : "voltam"} {label}
+                </li>
+              ))}
+            </ul>
+            <p className="mt-2 text-xs text-muted-foreground">
+              Promoções com dia marcado só aparecem no dia em que valem.
+            </p>
           </div>
         )}
       </main>
