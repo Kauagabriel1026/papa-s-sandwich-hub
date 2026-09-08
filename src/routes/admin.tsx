@@ -1,8 +1,20 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { ArrowLeft, Receipt, TrendingUp, TrendingDown, Wallet, Trophy } from "lucide-react";
+import {
+  ArrowLeft,
+  Receipt,
+  TrendingUp,
+  TrendingDown,
+  Wallet,
+  Trophy,
+  LogOut,
+  Database,
+  HardDrive,
+} from "lucide-react";
 
+import { useAuth } from "@/hooks/use-auth";
 import { useLedger } from "@/hooks/use-ledger";
+import { LoginForm } from "@/components/admin/LoginForm";
 import {
   PERIODS,
   PERIOD_LABELS,
@@ -37,8 +49,23 @@ export const Route = createFileRoute("/admin")({
 });
 
 function AdminPage() {
-  const { entries, ready, storageFailed, addSale, addExpense, removeEntry, importEntries } =
-    useLedger();
+  const auth = useAuth();
+
+  // Sem sessão, nem começa a buscar lançamento: as políticas do banco
+  // recusariam de qualquer forma, e assim não fica pedindo dado à toa.
+  const {
+    entries,
+    ready,
+    saving,
+    error,
+    storageFailed,
+    noBanco,
+    addSale,
+    addExpense,
+    removeEntry,
+    importEntries,
+  } = useLedger(auth.autenticado);
+
   const [period, setPeriod] = useState<Period>("hoje");
 
   const view = useMemo(() => {
@@ -56,21 +83,46 @@ function AdminPage() {
   const top = bestDay(days);
   const topExpense = [...categories].sort((a, b) => b.cents - a.cents)[0];
 
+  // Enquanto o Supabase decide se existe sessão, não mostramos nem o painel nem
+  // o login — piscar entre os dois é pior do que meio segundo de espera.
+  if (!auth.ready) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-border border-t-primary" />
+      </div>
+    );
+  }
+
+  if (!auth.autenticado) {
+    return <LoginForm onSignIn={auth.signIn} signingIn={auth.signingIn} error={auth.error} />;
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur-md">
         <div className="mx-auto flex max-w-5xl items-center justify-between gap-3 px-4 py-3">
-          <div>
+          <div className="min-w-0">
             <h1 className="text-lg font-bold tracking-tight text-foreground">Painel de controle</h1>
-            <p className="text-xs text-muted-foreground">{STORE_NAME}</p>
+            <p className="truncate text-xs text-muted-foreground">{auth.email ?? STORE_NAME}</p>
           </div>
-          <Link
-            to="/"
-            className="flex items-center gap-1.5 rounded-full border border-border px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            <span className="hidden sm:inline">Ver o site</span>
-          </Link>
+          <div className="flex shrink-0 items-center gap-2">
+            <Link
+              to="/"
+              className="flex items-center gap-1.5 rounded-full border border-border px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              <span className="hidden sm:inline">Ver o site</span>
+            </Link>
+            {auth.precisaLogin && (
+              <button
+                onClick={() => void auth.signOut()}
+                className="flex items-center gap-1.5 rounded-full border border-border px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+              >
+                <LogOut className="h-4 w-4" />
+                <span className="hidden sm:inline">Sair</span>
+              </button>
+            )}
+          </div>
         </div>
       </header>
 
@@ -82,8 +134,30 @@ function AdminPage() {
           </p>
         )}
 
+        {error && (
+          <p className="rounded-xl border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive">
+            {error}
+          </p>
+        )}
+
+        {/* Onde os dados estão morando agora. Sem isso ninguém sabe dizer se o
+            caixa está seguro no servidor ou preso num navegador só. */}
+        <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
+          {noBanco ? (
+            <>
+              <Database className="h-3.5 w-3.5 text-primary" />
+              Salvo no banco de dados — acessível de qualquer aparelho.
+            </>
+          ) : (
+            <>
+              <HardDrive className="h-3.5 w-3.5" />
+              Salvo só neste navegador. Exporte o backup com frequência.
+            </>
+          )}
+        </p>
+
         {/* Lançamento fica no topo: é a ação feita 30 vezes por noite. */}
-        <QuickEntry onAddSale={addSale} onAddExpense={addExpense} />
+        <QuickEntry onAddSale={addSale} onAddExpense={addExpense} salvando={saving} />
 
         {/* Filtro de período, numa linha só, acima dos números. */}
         <div className="flex flex-wrap gap-2">
@@ -157,9 +231,9 @@ function AdminPage() {
               <DailyChart data={days} />
             </div>
 
-            <EntryList entries={filtered} onRemove={removeEntry} />
+            <EntryList entries={filtered} onRemove={(id) => void removeEntry(id)} />
 
-            <BackupPanel entries={entries} onImport={importEntries} />
+            <BackupPanel entries={entries} onImport={importEntries} noBanco={noBanco} />
           </>
         )}
       </main>
