@@ -17,8 +17,10 @@ import { EXPENSE_CATEGORIES, formatCents, toCents, type ExpenseCategory } from "
 import { METHOD_COLOR, METHOD_SHORT } from "@/lib/viz";
 
 interface QuickEntryProps {
-  onAddSale: (amountCents: number, method: PaymentMethod, note: string) => void;
-  onAddExpense: (amountCents: number, category: ExpenseCategory, note: string) => void;
+  /** Devolve true quando o lançamento foi mesmo gravado. */
+  onAddSale: (amountCents: number, method: PaymentMethod, note: string) => Promise<boolean>;
+  onAddExpense: (amountCents: number, category: ExpenseCategory, note: string) => Promise<boolean>;
+  salvando?: boolean;
 }
 
 type Mode = "venda" | "despesa";
@@ -29,7 +31,7 @@ type Mode = "venda" | "despesa";
  * de pagamento são botões (não uma lista escondida) e o campo de valor já vem
  * com o teclado numérico.
  */
-export function QuickEntry({ onAddSale, onAddExpense }: QuickEntryProps) {
+export function QuickEntry({ onAddSale, onAddExpense, salvando = false }: QuickEntryProps) {
   const [mode, setMode] = useState<Mode>("venda");
   const [amount, setAmount] = useState("");
   const [method, setMethod] = useState<PaymentMethod>("Pix");
@@ -37,19 +39,34 @@ export function QuickEntry({ onAddSale, onAddExpense }: QuickEntryProps) {
   const [note, setNote] = useState("");
 
   const parsed = parseAmount(amount);
-  const isValid = parsed !== null && parsed > 0;
+  const isValid = parsed !== null && parsed > 0 && !salvando;
 
-  const handleSubmit = () => {
+  /**
+   * Só avisa "registrada" e limpa o formulário DEPOIS de o lançamento ser
+   * confirmado. Se a internet cair no meio, o valor continua na tela para o
+   * seu pai tentar de novo, em vez de sumir com a impressão de que foi salvo.
+   */
+  const handleSubmit = async () => {
     if (!isValid) return;
     const cents = toCents(parsed);
 
+    const ok =
+      mode === "venda"
+        ? await onAddSale(cents, method, note.trim())
+        : await onAddExpense(cents, category, note.trim());
+
+    if (!ok) {
+      toast.error("Não foi possível registrar", {
+        description: "O valor continua aqui. Confira a internet e tente de novo.",
+      });
+      return;
+    }
+
     if (mode === "venda") {
-      onAddSale(cents, method, note.trim());
       toast.success(`Venda de ${formatCents(cents)} registrada`, {
         description: METHOD_SHORT[method],
       });
     } else {
-      onAddExpense(cents, category, note.trim());
       toast.success(`Gasto de ${formatCents(cents)} registrado`, { description: category });
     }
 
@@ -98,7 +115,9 @@ export function QuickEntry({ onAddSale, onAddExpense }: QuickEntryProps) {
             id="amount"
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") void handleSubmit();
+            }}
             placeholder="0,00"
             inputMode="decimal"
             maxLength={10}
@@ -166,19 +185,21 @@ export function QuickEntry({ onAddSale, onAddExpense }: QuickEntryProps) {
           id="note"
           value={note}
           onChange={(e) => setNote(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") void handleSubmit();
+          }}
           placeholder={mode === "venda" ? "Ex.: mesa 3, delivery..." : "Ex.: caixa de pão"}
           maxLength={60}
         />
       </div>
 
       <Button
-        onClick={handleSubmit}
+        onClick={() => void handleSubmit()}
         disabled={!isValid}
         size="lg"
         className="mt-4 h-14 w-full text-base font-semibold"
       >
-        {mode === "venda" ? "Registrar venda" : "Registrar gasto"}
+        {salvando ? "Salvando..." : mode === "venda" ? "Registrar venda" : "Registrar gasto"}
         {isValid && <span className="ml-1 tabular-nums">· {formatCents(toCents(parsed))}</span>}
       </Button>
     </div>
