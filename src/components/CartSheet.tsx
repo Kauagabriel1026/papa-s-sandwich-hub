@@ -198,7 +198,9 @@ export function CartSheet({
                       value={cartItem.observation}
                       onChange={(e) => onUpdateObservation(cartItem.lineId, e.target.value)}
                       placeholder="Observação: sem cebola, ponto da carne..."
-                      className="mt-3 min-h-[60px] resize-none text-sm"
+                      /* Sem "text-sm" — abaixo de 16px o Safari do iPhone dá
+                         zoom sozinho ao focar o campo e não volta. */
+                      className="mt-3 min-h-[60px] resize-none"
                     />
                   </div>
                 ))}
